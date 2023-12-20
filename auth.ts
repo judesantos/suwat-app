@@ -1,43 +1,44 @@
-import NextAuth from "next-auth";
-import { authConfig } from "./auth.config";
-import Credentials from 'next-auth/providers/credentials'
-import { z } from 'zod';
-import type { User } from '@/app/lib/definitions';
-import { sql } from "@vercel/postgres";
-import bcrypt from 'bcrypt';
+import NextAuth from "next-auth"
 
-const getUser = async (email: string) => {
-  try {
-    const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
-    return user.rows[0];
-  } catch (error) {
-    console.error('Failed to fetch user: ' + error);
-    throw new Error('Failed to fetch user.')
-  }
-}
+import Apple from "next-auth/providers/apple"
+import Facebook from "next-auth/providers/facebook"
+import GitHub from "next-auth/providers/github"
+import Google from "next-auth/providers/google"
+import LinkedIn from "next-auth/providers/linkedin"
+import Pinterest from "next-auth/providers/pinterest"
+import type { NextAuthConfig } from "next-auth"
 
-export const { auth, signIn, signOut } = NextAuth({
-  ...authConfig,
-  providers: [
-    Credentials({
-      async authorize(credentials, request) {
-        const parsedCredentials = z
-        .object({email: z.string().email(), password: z.string().min(6)})
-        .safeParse(credentials)
+export const providers = [
+  Google,
+  Facebook,
+  Apple,
+  LinkedIn,
+  GitHub,
+  Pinterest,
+];
 
-        if (parsedCredentials.success) {
-          const { email, password } = parsedCredentials.data;
-          const user = await getUser(email);
-          if (!user)
-            return null;
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-          if (passwordsMatch)
-            return user;
-        }
+export const config = {
+  theme: {
+    logo: "https://next-auth.js.org/img/logo/logo-sm.png",
+    //logo: "http://localhost//logo/logo-sm.png",
+  },
+  providers,
+  pages: {
+    //signIn: '/auth/signin',
+    //signOut: '/auth/signout',
+    //newUser: '/auth/signup',
+    //error: '/auth/error', // Error code passed in query string as ?error=
+    //verifyRequest: '/auth/verify-request', // (used for check email message)
+  },
+  callbacks: {
+    
+    authorized({ request, auth }) {
+      const { pathname } = request.nextUrl
+      if (pathname === "/middleware-example") return !!auth
+      return true
+    },
+  },
+} satisfies NextAuthConfig
 
-        console.log('Invalid credentials')
-        return null;
-      }
-    })
-  ]
-});
+export const { handlers, auth, signIn, signOut, } = NextAuth(config);
+export default config;
