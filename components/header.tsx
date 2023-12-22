@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { auth, signIn, signOut } from "@/auth";
+import { auth } from "@/auth";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
@@ -95,6 +95,7 @@ export default async function Header() {
             */
           )}
         </div>
+        <ThemeChanger/>
         </div>
       </nav>
     </div>
