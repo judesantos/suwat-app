@@ -1,13 +1,18 @@
 import Image from "next/image";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/firebase/firebase-admin";
+
 import Header from '@/components/header';
-import Container from '@/components/home/container';
+import Container from '@/components/site/container';
 import ThemeProvider from '@/components/theme-provider';
-import heroImg from "@/public/img/hero.png";
 import SideBar from "@/components/ui/Sidebar/sidebar";
 import Dashboard from "@/components/ui/dashboard";
-import { Content } from "@radix-ui/react-dropdown-menu";
 
-const UserPage = (props: any) => {
+const DashboardPage = async () => {
+
+  const currUser = await getCurrentUser();
+  if (!currUser) redirect("/sign-in");
+
   return (
     <ThemeProvider attribute="class">
       <Header/>
@@ -19,4 +24,4 @@ const UserPage = (props: any) => {
   );
 }
 
-export default UserPage;
+export default DashboardPage;

@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { useState } from "react"
-import SessionData from "./session-data"
+import SessionData from "./auth"
 import CustomLink from "./custom-link"
 
 const UpdateForm = () => {

@@ -8,24 +8,24 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
 
-import { auth } from "@/auth"
-import { SignInForm, SignOutForm } from "./auth-components"
+import { SignInForm, SignOutForm } from "./auth"
+import { getCurrentUser } from "@/lib/firebase/firebase-admin"
 
 export default async function UserButton() {
-  const session = await auth();
-  if (!session?.user) return <SignInForm/>
+  const user = await getCurrentUser();
+  if (!user) return <SignInForm/>
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative w-8 h-8 rounded-full">
           <Avatar className="w-8 h-8">
-            {session.user.image && (
+            {user.photoURL && (
               <AvatarImage
-                src={session.user.image}
-                alt={session.user.name ?? ""}
+                src={user.photoURL}
+                alt={user.displayName ?? ""}
               />
             )}
-            <AvatarFallback>{session.user.email}</AvatarFallback>
+            <AvatarFallback>{user.email}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -33,10 +33,10 @@ export default async function UserButton() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {session.user.name}
+              {user.displayName}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {session.user.email}
+              {user.email}
             </p>
           </div>
         </DropdownMenuLabel>

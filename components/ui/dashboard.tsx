@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import Container from "../home/container";
+import Container from "../site/container";
 import { Button } from "./button";
 import { DocumentIcon, FilmIcon, MusicalNoteIcon } from '@heroicons/react/24/solid';
 

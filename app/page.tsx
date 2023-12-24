@@ -1,15 +1,15 @@
-import NavBar from '@/components/home/navbar';
-import Hero from '@/components/home/hero';
-import SectionTitle from '@/components/home/section-title';
-import Testimonials from '@/components/home/testimonials';
-import Faq from '@/components/home/faq';
-import Footer from '@/components/home/footer';
-import Video from '@/components/home/video';
-import Benefits from '@/components/home/benefits';
-import Cta from '@/components/home/cta';
-import PopupWidget from '@/components/home/popup';
+import NavBar from '@/components/site/navbar';
+import Hero from '@/components/site/hero';
+import SectionTitle from '@/components/site/section-title';
+import Testimonials from '@/components/site/testimonials';
+import Faq from '@/components/site/faq';
+import Footer from '@/components/site/footer';
+import Video from '@/components/site/video';
+import Benefits from '@/components/site/benefits';
+import Cta from '@/components/site/cta';
+import PopupWidget from '@/components/site/popup';
 
-import { benefitOne, benefitTwo } from "@/components/home/data";
+import { benefitOne, benefitTwo } from "@/components/site/data";
 import ThemeProvider from '@/components/theme-provider';
 
 export default function Index() {

@@ -95,10 +95,10 @@ export default function Navbar() {
         </div>
         <div className="hidden mr-3 space-x-3 lg:flex nav__item">
           <Link
-            href="/user"
+            href="/dashboard"
             className="px-6 py-2 text-white bg-indigo-600 rounded-md md:ml-5"
           >
-            <span>Go to Account</span>
+            <span>Sign In</span>
           </Link>
         </div>
         <ThemeChanger />
