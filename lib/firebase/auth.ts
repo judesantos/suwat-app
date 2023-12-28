@@ -1,11 +1,17 @@
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  AuthProvider,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  fetchSignInMethodsForEmail,
+  signInWithPopup,
+  signInWithCredential,
+  signInWithRedirect
+} from "firebase/auth";
 
+import { auth } from "./firebase"
 import { ApiResponse } from "../types";
-import { auth } from "@/lib/firebase/firebase";
 
-const signInWithGoogle = async () => {
-
-  const provider = new GoogleAuthProvider();
+const authenticate = async (provider: AuthProvider) => {
 
   try {
 
@@ -23,11 +29,38 @@ const signInWithGoogle = async () => {
     const respBody = (await resp.json()) as unknown as ApiResponse<string>;
     return (resp.ok && respBody.success) ? true : false;
 
-  } catch(e) {
-    console.error(e);
+  } catch (e: any) {
+
+    if (e.email && e.credential && e.code === "auth/account-exists-with-different-credential") {
+
+      console.error( e.code )
+      const methods: string[] = await fetchSignInMethodsForEmail(auth, e.email)
+      const providerKey = methods[0].split('.')[0]
+
+      if (providerKey === 'google') {
+
+        const provider = new GoogleAuthProvider();
+        await signInWithRedirect(auth, provider);
+
+      }
+
+    } else {
+
+      console.log(e);
+
+    }
+
   }
 
   return false;
+}
+
+const signInWithGithub = async () => {
+  return authenticate(new GithubAuthProvider());
+}
+
+const signInWithGoogle = async () => {
+  return authenticate(new GoogleAuthProvider());
 }
 
 const signOut = async () => {
@@ -52,6 +85,7 @@ const signOut = async () => {
 }
 
 export {
+  signInWithGithub,
   signInWithGoogle,
   signOut
 }

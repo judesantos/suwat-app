@@ -10,6 +10,7 @@ const getSession = async (): Promise<string | undefined> => {
 
     return cookies().get("__session")?.value;
 
+    console.log('getSession: ' + cookies)
   } catch (error) {
     return undefined;
   }
@@ -24,7 +25,7 @@ const firebaseApp =
   getApps().find(it => it.name === "suwat-93c8") ||
   initializeApp(
     {
-      credential: cert(process.env.NEXT_PUBLIC_FIREBASE_ADMIN_SERVICE_ACCOUNT)
+      credential: cert(process.env.NEXT_PUBLIC_FIREBASE_ADMIN_SERVICE_ACCOUNT || 'mock')
     }, 
     "suwat-93c8"
   );

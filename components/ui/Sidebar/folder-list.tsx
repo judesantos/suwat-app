@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FolderIcon, FolderOpenIcon } from '@heroicons/react/20/solid';
+import { FolderIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import clsx from 'clsx';
 
@@ -49,42 +49,42 @@ const FolderList = () => {
         selectedItemId={selectedItemId}
         itemId="1"
         label="Files"
-        href="#"
+        href="/dashboard"
       />
       <FolderItem
         onSelected={setSelectedItem}
         selectedItemId={selectedItemId}
         itemId="2"
         label="Pictures"
-        href="#"
+        href="/dashboard"
       />
       <FolderItem
         onSelected={setSelectedItem}
         selectedItemId={selectedItemId}
         itemId="3"
         label="WebPages"
-        href="#"
+        href="/dashboard"
       />
       <FolderItem
         onSelected={setSelectedItem}
         selectedItemId={selectedItemId}
         itemId="4"
         label="Illustrations"
-        href="#"
+        href="/dashboard"
       />
       <FolderItem
         onSelected={setSelectedItem}
         selectedItemId={selectedItemId}
         itemId="5"
         label="Films"
-        href="#"
+        href="/dashboard"
       />
       <FolderItem
         onSelected={setSelectedItem}
         selectedItemId={selectedItemId}
         itemId="6"
         label="Books"
-        href="#"
+        href="/dashboard"
       />
     </ul>
   )

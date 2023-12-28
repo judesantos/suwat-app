@@ -1,7 +1,7 @@
-import Container from "../../site/container";
-import { Button } from "../button";
 import MenuTab from "./menu-tab";
 import FolderList from "./folder-list";
+import Container from "@/components/site/container";
+import Link from "next/link";
 
 const SideBar = () => {
   
@@ -10,11 +10,12 @@ const SideBar = () => {
       <div className="m-5">
         <MenuTab/>
         <div className="mb-3">
-          <Button
+          <Link
+            href="/dashboard/upload"
             className="px-6 py-2 text-white bg-indigo-600 rounded-md md:w-full"
           >
             <span>Upload Files</span>
-          </Button>
+          </Link>
         </div>
         <h5 className="font-bold antialiased mb-3">Folders</h5>
         <FolderList/>

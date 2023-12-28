@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { isUserAuthenticated } from "@/lib/firebase/firebase-admin";
-import { SignOutForm } from "@/components/auth-components";
+import { SignOutDialog } from "@/components/auth-components";
 
 const SignOutPage = async () => {
 
@@ -10,7 +10,11 @@ const SignOutPage = async () => {
   }
 
   return (
-    <SignOutForm/>
+    <div
+      className="absolute top-1/4 left-1/3 w-1/3 h-3/5 border-2 border-gray-300 p-10"
+    >
+      <SignOutDialog/>
+    </div>
   )
 }
 

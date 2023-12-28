@@ -38,28 +38,28 @@ const MenuTab = () => {
         selectedItemId={selectedItem}
         itemId="1"
         label="All"
-        href='#'
+        href='/dashboard'
       />
       <MenuItem
         onSelected={setSelectedItem}
         selectedItemId={selectedItem}
         itemId="2"
         label="Transcription"
-        href='#'
+        href='/dashboard'
       />
       <MenuItem
         onSelected={setSelectedItem}
         selectedItemId={selectedItem}
         itemId="3"
         label="Audio"
-        href='#'
+        href='/dashboard'
       />
       <MenuItem
         onSelected={setSelectedItem}
         selectedItemId={selectedItem}
         itemId="4"
         label="Video"
-        href='#'
+        href='/dashboard'
       />
     </div>
   )
