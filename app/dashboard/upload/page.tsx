@@ -1,11 +1,18 @@
-import Dashboard from '@/components/ui/dashboard'
+import { redirect } from 'next/navigation';
+import { Suspense } from 'react'
 import FileDrop from '@/components/file-drop'
+import { getCurrentUser } from '@/lib/firebase/firebase-admin';
 
-export default function UploadPage() {
+export default async function UploadPage() {
+
+  const currUser = await getCurrentUser();
+  console.log({layout_dashboard: currUser})
+
+  if (!currUser) redirect("/sign-in");
 
   return (
-    <Dashboard>
+    <Suspense>
       <FileDrop/>
-    </Dashboard>
+    </Suspense>
   )
 }

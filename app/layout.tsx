@@ -1,3 +1,4 @@
+import ThemeProvider from "@/components/theme-provider";
 import "../styles/globals.css";
 import { Metadata, Viewport } from "next";
 
@@ -37,7 +38,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="scroll-smooth antialiased [font-feature-settings:'ss01']">
-        {children}
+        <ThemeProvider attribute="class">
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -79,6 +80,7 @@
     @apply dark:bg-trueGray-900;
   }
 }
+*/
 
 input[type="file"] {
   position: fixed;

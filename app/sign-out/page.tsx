@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { isUserAuthenticated } from "@/lib/firebase/firebase-admin";
-import { SignOutDialog } from "@/components/auth-components";
+import SignOutDialog from "@/components/auth/sign-out";
 
 const SignOutPage = async () => {
 

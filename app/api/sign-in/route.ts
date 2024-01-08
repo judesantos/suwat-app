@@ -15,6 +15,8 @@ const POST = async (req: NextRequest) => {
     const cookie = await createSessionCookie(idToken, { expiresIn })
     cookies().set("__session", cookie, { maxAge: expiresIn, httpOnly: true});
 
+    console.log('auth/sign-in success')
+    
   } catch(e) {
 
     return NextResponse.json<ApiResponse<string>>({

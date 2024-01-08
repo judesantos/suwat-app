@@ -4,7 +4,6 @@ import {
   GoogleAuthProvider,
   fetchSignInMethodsForEmail,
   signInWithPopup,
-  signInWithCredential,
   signInWithRedirect
 } from "firebase/auth";
 
@@ -18,7 +17,7 @@ const authenticate = async (provider: AuthProvider) => {
     const userCreds = await signInWithPopup(auth, provider);
     const idToken = await userCreds.user.getIdToken();
 
-    const resp = await fetch('/api/auth/sign-in', {
+    const resp = await fetch('/api/sign-in', {
       method: 'POST',
       headers: {
         "Content-Type": "application/json"
@@ -68,7 +67,7 @@ const signOut = async () => {
   try {
     await auth.signOut();
 
-    const resp = await fetch('/api/auth/sign-out', {
+    const resp = await fetch('/api/sign-out', {
       headers: {
         'Content-Type': 'application/json'
       }

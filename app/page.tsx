@@ -10,11 +10,10 @@ import Cta from '@/components/site/cta';
 import PopupWidget from '@/components/site/popup';
 
 import { benefitOne, benefitTwo } from "@/components/site/data";
-import ThemeProvider from '@/components/theme-provider';
 
 export default function Index() {
   return (
-    <ThemeProvider attribute="class">
+    <>
       <NavBar/>
       <Hero />
       <SectionTitle
@@ -49,6 +48,6 @@ export default function Index() {
       <Cta />
       <Footer />
       <PopupWidget />
-    </ThemeProvider>
+    </>
   );
 }

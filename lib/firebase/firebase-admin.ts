@@ -8,9 +8,9 @@ import { Auth, SessionCookieOptions, UserRecord, getAuth } from 'firebase-admin/
 const getSession = async (): Promise<string | undefined> => {
   try {
 
-    return cookies().get("__session")?.value;
-
-    console.log('getSession: ' + cookies)
+    const _cookies = cookies().get("__session")?.value;
+    console.log({_cookies})
+    return _cookies;
   } catch (error) {
     return undefined;
   }
@@ -38,8 +38,8 @@ const isUserAuthenticated = async (session: string | undefined = undefined): Pro
   if (!_session) return false;
 
   try {
-    const isRevoked = await auth.verifySessionCookie(_session, true);
-    return !isRevoked;
+    const token = await auth.verifySessionCookie(_session, true);
+    return token ? true : false;
   } catch (e) {
     console.error(e);
     return false;
