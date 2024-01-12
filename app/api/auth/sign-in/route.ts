@@ -1,21 +1,17 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 import { ApiResponse } from "@/lib/types";
-import { createSessionCookie } from "@/lib/firebase/firebase-admin";
+import { saveSessionCookie } from "@/lib/server/auth";
 
 const POST = async (req: NextRequest) => {
 
   try {
 
-    const body = await req.json() as { idToken: string};
+    const body = await req.json() as { type: 'external'|'external', idToken: string};
     const idToken = body.idToken;
+    const type = body.type;
 
-    const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
-    const cookie = await createSessionCookie(idToken, { expiresIn })
-    cookies().set("__session", cookie, { maxAge: expiresIn, httpOnly: true});
-
-    console.log('auth/sign-in success')
+    await saveSessionCookie(type, idToken)
     
   } catch(e) {
 

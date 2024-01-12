@@ -1,6 +1,9 @@
 import ThemeProvider from "@/components/theme-provider";
 import "../styles/globals.css";
 import { Metadata, Viewport } from "next";
+import { Inter } from 'next/font/google';
+
+const inter = Inter({subsets: ['latin'], display: 'swap'});
 
 export const metadata: Metadata = {
   title: "Liftoff - AI-Powered Mock Interviews",
@@ -36,7 +39,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.className}>
       <body className="scroll-smooth antialiased [font-feature-settings:'ss01']">
         <ThemeProvider attribute="class">
           {children}

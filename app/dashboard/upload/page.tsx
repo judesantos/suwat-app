@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react'
 import FileDrop from '@/components/file-drop'
-import { getCurrentUser } from '@/lib/firebase/firebase-admin';
+import { getCurrentUser } from '@/lib/server/auth';
 
 export default async function UploadPage() {
 

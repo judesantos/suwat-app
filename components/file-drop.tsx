@@ -23,6 +23,7 @@ type ListViewFileItemProps = {
   data: any,
   dispatch:({})=>void
 }
+
 const ListViewFileItem = (props: ListViewFileItemProps) => {
 
   const deleteFile =() => {
@@ -278,7 +279,7 @@ const reducer = (state: any, action: any) => {
   }
 }
 
-export default async function FileDrop() {
+export default function FileDrop() {
 
   const [data, dispatch] = useReducer(reducer, {
     dragging: 0,

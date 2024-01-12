@@ -11,8 +11,6 @@ const PUT = async (req: NextRequest) => {
     const body = await req.json() as { user: User};
     const user = body.user;
 
-    console.log({signUp: user})
-
     const dbResponse: DbResponse = await addUser(user);
 
     if (dbResponse.status === DbStatusCode.SUCCESS) {
@@ -23,8 +21,6 @@ const PUT = async (req: NextRequest) => {
       });
 
     } else {
-
-      console.error({dbError: dbResponse})
 
       return NextResponse.json<ApiResponse<DbError|undefined>>({
         success: false, 

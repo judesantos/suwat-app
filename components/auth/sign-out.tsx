@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
-import { handleSignOut } from "@/lib/action";
+import { handleSignOut } from "@/lib/client/auth";
 
 const buttonStyle = "text-white bg-indigo-600 rounded-md";
 

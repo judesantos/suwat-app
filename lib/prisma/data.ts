@@ -1,16 +1,46 @@
-import { DbResponse, DbStatusCode, StatusCode, User } from "../types";
-import prisma, { marshallError } from "./prisma";
+'use server'; 
 
+import { AppResponse, DbResponse, DbStatusCode, StatusCode, User } from "../types";
+import { hashString } from "../utils";
+import prisma, { marshallError, marshallDbData } from "./prisma";
 
 /** Helper method - converts BigInt to JSON friendly type (string) */
 const preProcessResult = (result: any): any => {
-  if (result?.id) {
-    result.id = result.id.toString()
-  }
-  return result;
+  return marshallDbData(result);
 }
 
 /** Helper method - handle DB errors */
+
+const validateUserAccount = async (
+  email: string,
+  password: string
+): Promise<AppResponse> => {
+
+  try {
+
+    const q = {where: {email}};
+
+    const result = await prisma.user.findFirst(q);
+    
+    if (result) {
+      if (result?.password !== hashString(password)) {
+        // password match failed
+        return {status: StatusCode.INVALID_VALUE, message: "Invalid email or password"};
+      } else {
+        return {status: StatusCode.SUCCESS, data: preProcessResult(result)};
+      }
+    } else {
+      return {status: StatusCode.NOT_FOUND, message: "Invalid email or password"};
+    }
+
+  } catch (e) {
+
+    console.error({validateUserAccountError: e})
+    return {status: StatusCode.FAILED, message: "Login failed"};
+
+  }
+
+}
 
 /**
  * Db operation - find user by id or email 
@@ -19,25 +49,17 @@ const preProcessResult = (result: any): any => {
  * @returns Db entry, user details
  */
 const findUser = async (
-  id: number | undefined, 
-  email: string | undefined
+  email: string,
+  id?: number
 ): Promise<DbResponse> => {
 
   let result = undefined;
 
   try {
 
-    const where = {
-      where: {
-        OR: [{
-          id
-        }, {
-          email
-        }],
-      }
-    }
-
-    result = await prisma.user.findFirst(where);
+    let q = id ? {where: {OR: [{id}, {email}]}} : {where: {email}};
+    // fetch!
+    result = await prisma.user.findFirst(q as any);
 
   } catch (e: any) {
 
@@ -81,18 +103,37 @@ const fetchUsers = async (): Promise<DbResponse> => {
  */
 const addUser = async (user: User): Promise<DbResponse> => {
   let result = undefined;
-  
-  try{ 
+  try { 
+    // Set data for User table
+    let data: any = {
+      email: user.email,
+      userName: user.userName,
+      fullName: user.fullName,
+      password: user.password,
+      phone: user.phone
+    };
+    // Include auth_providers, if any
+    if (user?.providers?.length) {
+      const auth_providers: any = {create: []};
+      user.providers.forEach(p => auth_providers.create.push({provider: p.provider}));
+      data.auth_provider = auth_providers;
+    }
+    // Insert into User table.
+    // Return User try, including it's fk - auth_provider
+    result = await prisma.user.create({
+      data,
+      include: { 
+        auth_provider: true
+      }
+    });
 
-    result = await prisma.user.create({data: user})
-  
+    return {status: DbStatusCode.SUCCESS, result: preProcessResult(result)};
+
   } catch (e: any) { 
 
+    console.log({addUserException: e})
     return { status: DbStatusCode.FAILED, error: marshallError(e)};
   }
-
-  result = preProcessResult(result);
-  return {status: DbStatusCode.SUCCESS, result};
 }
 
 /**
@@ -125,5 +166,6 @@ export {
   fetchUsers,
   findUser,
   addUser,
-  updateUser
+  updateUser,
+  validateUserAccount
 }

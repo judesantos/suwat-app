@@ -2,37 +2,34 @@ import {
   AuthProvider,
   GithubAuthProvider,
   GoogleAuthProvider,
+  UserCredential,
   fetchSignInMethodsForEmail,
   signInWithPopup,
   signInWithRedirect
 } from "firebase/auth";
-
 import { auth } from "./firebase"
-import { ApiResponse } from "../types";
 
-const authenticate = async (provider: AuthProvider) => {
+const authenticate = async (
+  provider: AuthProvider
+): Promise<{
+  success: boolean,
+  credential?: UserCredential
+}> => {
 
+  let _success = false;
+  let cred: UserCredential|undefined = undefined;
   try {
 
-    const userCreds = await signInWithPopup(auth, provider);
-    const idToken = await userCreds.user.getIdToken();
-
-    const resp = await fetch('/api/sign-in', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ idToken })
-    });
-
-    const respBody = (await resp.json()) as unknown as ApiResponse<string>;
-    return (resp.ok && respBody.success) ? true : false;
+    cred = await signInWithPopup(auth, provider);
+    _success = true;
 
   } catch (e: any) {
 
     if (e.email && e.credential && e.code === "auth/account-exists-with-different-credential") {
-
-      console.error( e.code )
+      /**
+       * TODO: handle the case where user is using an email enrolled in multiple providers (google, github)
+       * Moot if not implementing multiple provider login. As of now, we only accept Google as external provider.
+       */
       const methods: string[] = await fetchSignInMethodsForEmail(auth, e.email)
       const providerKey = methods[0].split('.')[0]
 
@@ -51,7 +48,7 @@ const authenticate = async (provider: AuthProvider) => {
 
   }
 
-  return false;
+  return {success: _success, credential: cred};
 }
 
 const signInWithGithub = async () => {
@@ -62,29 +59,7 @@ const signInWithGoogle = async () => {
   return authenticate(new GoogleAuthProvider());
 }
 
-const signOut = async () => {
-
-  try {
-    await auth.signOut();
-
-    const resp = await fetch('/api/sign-out', {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    const respBody = (await resp.json()) as unknown as ApiResponse<string>;
-    return (resp.ok && respBody.success) ? true : false
-
-  } catch(e) {
-    console.error(e);
-  }
-
-  return false;
-}
-
 export {
   signInWithGithub,
-  signInWithGoogle,
-  signOut
+  signInWithGoogle
 }

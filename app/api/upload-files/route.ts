@@ -18,8 +18,6 @@ export async function POST(request: NextRequest) {
         const file: File = formValue as unknown as File;
         const buffer = Buffer.from(await file.arrayBuffer())
 
-        console.log('save file ' + file.name)
-
         fs.writeFileSync(`/tmp/${file.name}`, buffer)
 
         filesCount++;
@@ -45,7 +43,7 @@ export async function POST(request: NextRequest) {
 
   } catch (e) {
 
-    console.log(e);
+    console.error(e);
   }
 
   return NextResponse.json<ApiResponse<string>>({

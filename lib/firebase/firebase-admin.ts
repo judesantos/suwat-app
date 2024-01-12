@@ -1,64 +1,41 @@
 import 'server-only';
 
-import { cookies } from 'next/headers';
-
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { Auth, SessionCookieOptions, UserRecord, getAuth } from 'firebase-admin/auth';
-
-const getSession = async (): Promise<string | undefined> => {
-  try {
-
-    const _cookies = cookies().get("__session")?.value;
-    console.log({_cookies})
-    return _cookies;
-  } catch (error) {
-    return undefined;
-  }
-}
 
 /**
  * 
  * Exported services
  */
 
-const firebaseApp = 
-  getApps().find(it => it.name === "suwat-93c8") ||
-  initializeApp(
-    {
-      credential: cert(process.env.NEXT_PUBLIC_FIREBASE_ADMIN_SERVICE_ACCOUNT || 'mock')
-    }, 
+const firebaseApp = getApps()
+  .find(it => it.name === "suwat-93c8") || 
+  initializeApp({
+    credential: cert(process.env.NEXT_PUBLIC_FIREBASE_ADMIN_SERVICE_ACCOUNT || 'mock')
+  }, 
     "suwat-93c8"
   );
 
 const auth: Auth = getAuth(firebaseApp);
 
-const isUserAuthenticated = async (session: string | undefined = undefined): Promise<boolean> => {
-
-  const _session = session ?? (await getSession());
-  if (!_session) return false;
-
+const getSessionToken = async (token:string) => {
   try {
-    const token = await auth.verifySessionCookie(_session, true);
-    return token ? true : false;
-  } catch (e) {
-    console.error(e);
-    return false;
+    console.log({getSessionToken: token})
+    return await auth.verifySessionCookie(token, true);
+  } catch(e) {
+    console.error({getSessionTokenException: e});
   }
 }
 
-const getCurrentUser = async () => {
+const getSessionUser = async (token: string): Promise<UserRecord|undefined> => {
 
-  const session = await getSession();
-  if (!session) return false;
-
-  if (await !isUserAuthenticated(session)) {
-    return false;
+  try {
+    const decoded = await getSessionToken(token);
+    if (decoded)
+      return await auth.getUser(decoded.uid);
+  } catch (e) {
+    console.error({getSessionUserException: e});
   }
-
-  const decodedIdToken = await auth.verifySessionCookie(session);
-  const currentUser: UserRecord = await auth.getUser(decodedIdToken.uid);
-  
-  return currentUser;
 }
 
 const createSessionCookie = async (
@@ -68,19 +45,19 @@ const createSessionCookie = async (
   return auth.createSessionCookie(idToken, sessionCookieOptions);
 }
 
-const revokeAllSessions = async (session: string): Promise<void>  => {
-  const decodedIdToken = await auth.verifySessionCookie(session);
-
-  return await auth.revokeRefreshTokens(decodedIdToken.sub);
+const revokeAllSessions = async (token:string): Promise<void>  => {
+  const decoded = await getSessionToken(token);
+  if (decoded)
+    await auth.revokeRefreshTokens(decoded.sub);
 }
 
 export {
   revokeAllSessions,
   createSessionCookie,
-  isUserAuthenticated,
-  getCurrentUser,
-  auth,
-  firebaseApp
+  getSessionUser,
+  getSessionToken,
+  //auth,
+  //firebaseApp
 }
 
 

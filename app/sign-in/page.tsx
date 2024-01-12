@@ -1,12 +1,11 @@
 import { redirect } from "next/navigation";
 
-import { isUserAuthenticated } from "@/lib/firebase/firebase-admin";
 import SignInDialog from "@/components/auth/sign-in";
+import { isSessionAlive } from "@/lib/server/auth";
 
 const SignInPage = async () => {
 
-  const isAuthenticated = await isUserAuthenticated();
-  
+  const isAuthenticated = await isSessionAlive();
   console.log({isAuthenticated})
   if (isAuthenticated) {
     redirect("/dashboard");
@@ -14,13 +13,13 @@ const SignInPage = async () => {
 
   return (
     <div
-        className="md:overflow-y-auto"
+      className="md:overflow-y-auto"
     >
-        <div
-          className="w-full h-screen flex justify-center items-center"
-        >
-          <SignInDialog variant="sign-in"/>
-        </div>
+      <div
+        className="w-full h-screen flex justify-center items-center"
+      >
+        <SignInDialog variant="sign-in"/>
+      </div>
     </div>
   )
 }
