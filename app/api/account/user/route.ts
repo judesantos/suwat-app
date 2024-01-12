@@ -1,6 +1,5 @@
 import { findUser } from "@/lib/prisma/data";
 import { ApiResponse, DbError, DbResponse, DbStatusCode } from "@/lib/types";
-import { NextApiRequest } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
 const GET = async (req: NextRequest) => {

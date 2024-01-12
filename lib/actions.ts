@@ -41,7 +41,7 @@ const passwordResetRequest = async (
       .max(50, "Email exceeds limit of 50 characters"),
   });
 
-  const email = formData.get('email')?.toString() ??  '';
+  let email = formData.get('email')?.toString() ??  '';
 
   // validate form input
   const validator = PasswordResetFormSchema.safeParse({email});
@@ -59,9 +59,12 @@ const passwordResetRequest = async (
      *    email: user.email
      *  })
      */
-    revalidatePath("/forgot");
-    redirect("/forgot/confirmation");
+  } else {
+    email = "NOT-FOUND_"+email;
   }
+  // Redirect to summary page
+  revalidatePath("/forgot");
+  redirect("/forgot/confirmation/"+email);
   // else - something is wrong
   throw "Password reset failed."
 }
