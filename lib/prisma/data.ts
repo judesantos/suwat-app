@@ -60,6 +60,9 @@ const findUser = async (
     let q = id ? {where: {OR: [{id}, {email}]}} : {where: {email}};
     // fetch!
     result = await prisma.user.findFirst(q as any);
+    if (!result) {
+      return {status: DbStatusCode.RECORD_NOT_FOUND}
+    }
 
   } catch (e: any) {
 

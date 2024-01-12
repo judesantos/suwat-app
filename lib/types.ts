@@ -29,6 +29,7 @@ export type User = {
 export enum DbStatusCode {
   FAILED = -1,
   SUCCESS = 0,
+  RECORD_NOT_FOUND = 500,
   UNIQUE_ENTRY_VIOLATION = 1000,
   CONNECTION_ERROR = 1050,
   INVALID_VALUE = 2000,
