@@ -11,23 +11,22 @@ const ConfirmationPage = async ({params}:{params:{email:string}}) => {
     email = decodeURIComponent(split[1]);
     info = (
       <><p>
-        Sorry, email address
+        {"Sorry, email address "}
         <span className="underline underline-offset-4 font-medium">
-          {` ${email} `}
+          {email}
         </span> 
-        is not enrolled with us.
+        {" is not enrolled with us."}
       </p></>
     )
   } else {
     email = decodeURIComponent(params.email);
     info = (
       <><p>
-        Email address
+        {"Email address "}
         <span className="underline underline-offset-4 font-medium">
-          {` ${email} `}
+          {email}
         </span> 
-        found,
-        you should receive an email from us very soon.
+        {" found, you should receive an email from us very soon."}
       </p>
       <p> 
         If no email is received after waiting a few minutes

@@ -61,14 +61,11 @@ const SignInDialog = ({
   variant: "sign-in" | "dashboard",
 }) => {
 
-  let googleAuthErrMessage = '';
-
   const [state, dispatch] = useFormState(emailPasswordSignIn, {errors:{}});
   const [error, setError] = useState(false);
   const router = useRouter();
 
   const googleSignIn = async () => {
-    console.log('googleSignIn')
     const resp = await handleGoogleSignIn(router, 'google');
     if (!resp.success) {
       setError(true);
@@ -78,7 +75,7 @@ const SignInDialog = ({
   if (variant === "sign-in") {
     return (
       <>
-        <div className={clsx("absolute w-full  h-10 top-10 text-center text-white bg-red-500", {
+        <div className={clsx("absolute w-full h-10 top-10 text-center text-white bg-red-500", {
           "hidden": !error
         })}>
           <p className="h-full py-2">
@@ -105,7 +102,9 @@ const SignInDialog = ({
                 <div
                   className="space-y-2"
                 >
+                <div>
                   Enter your email address and password
+                </div>
                 <Input 
                   id="email"
                   name="email"
