@@ -39,7 +39,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html
+      lang="en"
+      className={inter.className}
+      suppressHydrationWarning
+    >
       <body className="scroll-smooth antialiased [font-feature-settings:'ss01']">
         <ThemeProvider attribute="class">
           {children}
