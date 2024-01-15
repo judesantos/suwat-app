@@ -113,7 +113,7 @@ const SignUpFormEmail = ({
         "hidden": !duplicateEmailError
       })}>
         <p className="h-full py-2">
-          {"It looks like the email address is already enrolled with us. Would you like to try and "}
+          {"It looks like the email address is already in use. Would you like to try and "}
           <Link 
             href={"/sign-in"}>
             Sign in?

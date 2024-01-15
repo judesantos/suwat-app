@@ -41,23 +41,15 @@ const validateUserAccount = async (
   }
 
 }
-
-/**
- * Db operation - find user by id or email 
- * @param id 
- * @param email 
- * @returns Db entry, user details
- */
-const findUser = async (
-  email: string,
-  id?: number
+const findUserByPhone = async (
+  phone: string,
 ): Promise<DbResponse> => {
 
   let result = undefined;
 
   try {
 
-    let q = id ? {where: {OR: [{id}, {email}]}} : {where: {email}};
+    let q = {where: {phone}};
     // fetch!
     result = await prisma.user.findFirst(q as any);
     if (!result) {
@@ -72,7 +64,31 @@ const findUser = async (
 
   result = preProcessResult(result);
   return {status: DbStatusCode.SUCCESS, result}
+}
 
+const findUser = async (
+  email: string,
+): Promise<DbResponse> => {
+
+  let result = undefined;
+
+  try {
+
+    let q = {where: {email}};
+    // fetch!
+    result = await prisma.user.findFirst(q as any);
+    if (!result) {
+      return {status: DbStatusCode.RECORD_NOT_FOUND}
+    }
+
+  } catch (e: any) {
+
+    return {status: DbStatusCode.FAILED, error: e}
+
+  }
+
+  result = preProcessResult(result);
+  return {status: DbStatusCode.SUCCESS, result}
 }
 
 /**
@@ -168,6 +184,7 @@ const updateUser = async (user: User): Promise<DbResponse> => {
 export {
   fetchUsers,
   findUser,
+  findUserByPhone,
   addUser,
   updateUser,
   validateUserAccount

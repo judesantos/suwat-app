@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { deleteSessionCookie, revokeSession } from "@/lib/server/auth";
-import { redirect } from "next/navigation";
+import { RedirectType, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 const GET = async (req: NextRequest, res: NextResponse) => {
@@ -22,7 +22,7 @@ const GET = async (req: NextRequest, res: NextResponse) => {
   }
 
   revalidatePath("/");
-  redirect("/sign-in");
+  redirect("/", RedirectType.replace);
 }
 
 export { GET };

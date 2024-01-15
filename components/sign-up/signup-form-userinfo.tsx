@@ -1,6 +1,6 @@
 'use client';
 
-import { AppResponse, StatusCode, UserAuthProvider } from "@/lib/types";
+import { AppResponse, DbResponse, DbStatusCode, StatusCode, UserAuthProvider } from "@/lib/types";
 import { User } from "@/lib/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,7 @@ import clsx from "clsx";
 import { UserForm } from "./signup-main";
 import { signUpUser } from "@/lib/client/auth";
 import { hashString } from "@/lib/utils";
+import { findUserByPhone } from "@/lib/prisma/data";
 
 const formValidator = () => {
   /* password rule:
@@ -33,7 +34,7 @@ const formValidator = () => {
     userName: z.string({required_error: "Username is required"})
       .min(3, "Min. 3 chars required")
       .max(50, "Exceeds 50 char limit"),
-    password: z.string({required_error: "Password is required"})
+    password: z.string({required_error: "Password is required", coerce: true})
       .min(8, 'Min. 8 chars required')
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,127}$/,
@@ -45,7 +46,8 @@ const formValidator = () => {
         "Invalid phone code"
       )
       .min(8, "Phone number minimum is 8 digits")
-  });
+      .max(250, "Phone number too long")
+  })
 
   return UserFormSchema;
 }
@@ -60,10 +62,10 @@ const SignUpFormUserInfo = ({
 
   const router = useRouter();
   const [tooltip, setToolTip] = useState(false);
-  const [signupError, setSignupError] = useState({status: StatusCode.SUCCESS} as AppResponse);
-
   const schemaValidator = formValidator();
+
   const [errors, setErrors] = useState<z.inferFlattenedErrors<typeof schemaValidator>>(); 
+  const [customError, setCustomError] = useState(false);
 
   const clearValidation = (field:string) => {
     if (field === 'fullName' && user?.fullName?.length && errors?.fieldErrors?.fullName?.length) {
@@ -98,16 +100,35 @@ const SignUpFormUserInfo = ({
     }
   }
 
-  const handleSignUp = async () => {
-    const validation = schemaValidator.safeParse(user);
-    if (!validation.success) {
-      // Validation failed. try again
-      setErrors(validation.error.flatten())
+  const isDuplicatePhone = async (phone: string) => {
+    const resp:DbResponse = await findUserByPhone(phone);
+    console.log({isDuplicatePhone: resp})
+    if (resp.status !== DbStatusCode.SUCCESS &&
+        resp.status !== DbStatusCode.RECORD_NOT_FOUND
+    ) {
+      // All other errors are unexpected. Possible DB connection, or something else.
+      throw resp.error; // TODO - handle this in an error.page
+    }
+    return resp.status === DbStatusCode.SUCCESS;
+  }
 
+  const handleSignUp = async () => {
+    const validation = await schemaValidator.safeParseAsync(user);
+    console.log({validation})
+    if (!validation.success && validation.error) {
+      // Validation failed. try again
+      setErrors(validation?.error?.flatten())
       if (validation.error.flatten().fieldErrors.password?.length) {
         setToolTip(true);
       }
+    }
 
+    // Check for duplicate phone in DB
+    if (await isDuplicatePhone(user.phone)) {
+      setCustomError(true);
+    }
+
+    if (!validation.success || customError) {
       return;
     }
 
@@ -126,16 +147,16 @@ const SignUpFormUserInfo = ({
       const provider = new UserAuthProvider();
       provider.provider = user.providerId;
       _user.providers?.push(provider);
-
-      console.log({sendToSignUpUser: _user, UserForm: user})
     }
 
+    // Sign up! Server processing.
     const {status, message} = await signUpUser(_user);
+
     if (status === StatusCode.SUCCESS) {
       // Signup success! Go to sign in page
       router.replace("/sign-in")
     } else {
-      setSignupError({status, message});
+
     }
   }
 
@@ -171,44 +192,10 @@ const SignUpFormUserInfo = ({
         >
           Create your account
         </h1>
-        {signupError && signupError.status !== StatusCode.SUCCESS && (
-          signupError?.status === StatusCode.ACCOUNT_EXISTS ? (
-            <>
-              <span
-                className="font-semibold text-red-500"
-              >
-                {`Account exists for `}
-              </span>
-              {`${user.email}. `}<br/>
-              <Link
-                href={"/sign-in"}
-                className="text-blue-700"
-              > 
-                Sign in
-              </Link>?
-            </>
-          ) : (
-            <>
-              <span
-                className="font-semibold text-red-500"
-              >
-                {signupError.message}
-              </span><br/>
-              {"Try again, or " }
-                <Link
-                href={"/sign-up"}
-                className="text-blue-700"
-              > 
-                Sign in 
-              </Link>
-            </>
-          )
-        )}
       </div>
       <div
         className="flex-row space-y-4 w-9/12 mt-14"
       >
-        <form>
         <div className="space-y-1">
           <label>Full Name</label>
           <Input
@@ -238,10 +225,13 @@ const SignUpFormUserInfo = ({
             onKeyDown={()=>clearValidation('phone')}
           />
           <span className={clsx("text-red-500", {
-              "hidden": !errors?.fieldErrors?.phone
+              "hidden": !errors?.fieldErrors?.phone&&!customError
             })}
           >
             {errors?.fieldErrors['phone']?.at(0)}
+            {customError && (
+              "Phone no. is used by another account"
+            )}
           </span>
         </div>
         <div className="space-y-1">
@@ -295,7 +285,6 @@ const SignUpFormUserInfo = ({
             </div>
           </div>
         </div>
-        </form>
       </div>
       <div className="flex-row h-3/5 mb-10">
         <div className="w-full absolute bottom-0">

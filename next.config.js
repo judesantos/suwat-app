@@ -1,11 +1,5 @@
 /** @type {import('next').NextConfig} */
-//const nextConfig = {};
-//module.exports = nextConfig;
-
 const nextConfig = {
-  experimental: {
-    serverActions: true,
-  },
   reactStrictMode: true,
   async headers() {
     return [
