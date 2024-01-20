@@ -20,7 +20,6 @@ const auth: Auth = getAuth(firebaseApp);
 
 const getSessionToken = async (token:string) => {
   try {
-    console.log({getSessionToken: token})
     return await auth.verifySessionCookie(token, true);
   } catch(e) {
     console.error({getSessionTokenException: e});

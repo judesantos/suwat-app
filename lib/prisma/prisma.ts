@@ -40,7 +40,7 @@ export const marshallDbData = (obj: any): any => {
   if (Array.isArray(obj)) {
     let len = obj.length;
     for (let idx = 0; idx < len; len++) {
-      if (typeof obj[idx] === 'object') {
+      if (obj[idx] !== null && typeof obj[idx] === 'object') {
         return marshallDbData(obj[idx]);
       } else if (typeof obj[idx] === 'bigint') {
         obj[idx] = obj[idx].toString();
@@ -48,7 +48,7 @@ export const marshallDbData = (obj: any): any => {
     }
   } else if (typeof obj === 'object') {
     for (const [key, value] of Object.entries(obj)) {
-      if (typeof value === 'object' || Array.isArray(value)) {
+      if (value !== null && typeof value === 'object' || Array.isArray(value)) {
         return marshallDbData(value);
       } else if (typeof value === 'bigint') {
         obj[key] = value.toString();
@@ -60,7 +60,6 @@ export const marshallDbData = (obj: any): any => {
 
 export const marshallError = (error: Error): DbError|undefined => {
 
-  console.log({error})
   let dbError: DbError|undefined = undefined;
   let arr_message = error.message.split("\n");
   let message = arr_message.length ? arr_message[arr_message.length-1] : '';

@@ -1,4 +1,3 @@
-
 export type ApiResponse<T = object> = {
   success: boolean;
   data?: T 
@@ -12,18 +11,42 @@ export enum Role {
 
 export class UserAuthProvider {
   id: number = -1;
+  date?: Date|null;
+  updated?: Date|null;
   user_id: number = -1;
   provider: string = '';
 }
 
+export type File = {
+  id?: number,
+  user_id: number,
+  date?: Date,
+  updated?: Date,
+  filename: string, 
+  transcription?: Transcription
+}
+
+export type Transcription = {
+  id?: number,
+  user_id: number,
+  date?: Date,
+  updated?: Date,
+  in_file?: File,
+  out_file: File
+}
+
 export type User = {
   id?: number,
+  date?: Date,
+  updated?: Date,
   fullName: string,
   userName: string,
   email: string,
   password?: string,
   phone: string,
   providers?: UserAuthProvider[]
+  files?: File[],
+  transcriptions?: Transcription[]
 };
 
 export enum DbStatusCode {

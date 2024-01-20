@@ -1,12 +1,13 @@
 'use server'; 
 
-import { AppResponse, DbResponse, DbStatusCode, StatusCode, User } from "../types";
+import { AppResponse, DbResponse, DbStatusCode, File, StatusCode, Transcription, User } from "../types";
 import { hashString } from "../utils";
 import prisma, { marshallError, marshallDbData } from "./prisma";
 
 /** Helper method - converts BigInt to JSON friendly type (string) */
 const preProcessResult = (result: any): any => {
-  return marshallDbData(result);
+  const _result = marshallDbData(result);
+  return _result;
 }
 
 /** Helper method - handle DB errors */
@@ -80,7 +81,6 @@ const findUser = async (
     if (!result) {
       return {status: DbStatusCode.RECORD_NOT_FOUND}
     }
-
   } catch (e: any) {
 
     return {status: DbStatusCode.FAILED, error: e}
@@ -129,7 +129,9 @@ const addUser = async (user: User): Promise<DbResponse> => {
       userName: user.userName,
       fullName: user.fullName,
       password: user.password,
-      phone: user.phone
+      phone: user.phone,
+      date: Date.now(),
+      updated: Date.now()
     };
     // Include auth_providers, if any
     if (user?.providers?.length) {
@@ -150,7 +152,6 @@ const addUser = async (user: User): Promise<DbResponse> => {
 
   } catch (e: any) { 
 
-    console.log({addUserException: e})
     return { status: DbStatusCode.FAILED, error: marshallError(e)};
   }
 }
@@ -165,10 +166,10 @@ const updateUser = async (user: User): Promise<DbResponse> => {
   let result = undefined;
 
   try{ 
-
+    let data:any = {...user, updated: Date.now()}
     result = await prisma.user.update({
       where: {id: user.id},
-      data: user
+      data
     })
   
   } catch (e:any) { 
@@ -180,6 +181,134 @@ const updateUser = async (user: User): Promise<DbResponse> => {
   return {status: DbStatusCode.SUCCESS, result};
 }
 
+/**
+ * 
+ * @param trx: Transcription
+ * @returns 
+ */
+const addTranscription = async (trx: Transcription): Promise<DbResponse> => {
+
+  let result = undefined;
+
+  try {
+    let data:any = {...trx, date: Date.now(), updated: Date.now()}
+    result = await prisma.transcriptions.create({
+      data,
+    })
+
+  } catch (e:any) {
+
+    return { status: DbStatusCode.FAILED, error: marshallError(e)};
+  }
+
+  result = preProcessResult(result);
+  return {status: DbStatusCode.SUCCESS, result};
+}
+
+/**
+ * 
+ * @param trx 
+ * @returns 
+ */
+const updateTranscription = async (trx: Transcription): Promise<DbResponse> => {
+  
+  let result = undefined;
+
+  try{ 
+    let data:any = {...trx, updated: Date.now()}
+    result = await prisma.transcriptions.update({
+      where: {id: trx.id},
+      data
+    })
+  
+  } catch (e:any) { 
+
+    return { status: DbStatusCode.FAILED, error: marshallError(e)};
+  }
+
+  result = preProcessResult(result);
+  return {status: DbStatusCode.SUCCESS, result};
+}
+
+/**
+ * 
+ * @param id 
+ * @returns 
+ */
+const deleteTranscription = async (id: number): Promise<DbResponse> => {
+  
+  let result = undefined;
+
+  try{ 
+    result = await prisma.transcriptions.delete({
+      where: {id},
+    })
+  
+  } catch (e:any) { 
+
+    return { status: DbStatusCode.FAILED, error: marshallError(e)};
+  }
+
+  result = preProcessResult(result);
+  return {status: DbStatusCode.SUCCESS, result};
+}
+
+const addFile = async (file: File): Promise<DbResponse> => {
+
+  let result = undefined;
+
+  try {
+    let data:any = {...file, date: Date.now(), updated: Date.now()};
+    result = await prisma.files.create({
+      data,
+    })
+
+  } catch (e:any) {
+
+    return { status: DbStatusCode.FAILED, error: marshallError(e)};
+  }
+
+  result = preProcessResult(result);
+  return {status: DbStatusCode.SUCCESS, result};
+}
+
+const updateFile = async (file: File): Promise<DbResponse> => {
+  let result = undefined;
+
+  try{ 
+    let data:any = {...file, updated: Date.now()}
+    result = await prisma.files.update({
+      where: {id: file.id},
+      data
+    })
+  
+  } catch (e:any) { 
+
+    return { status: DbStatusCode.FAILED, error: marshallError(e)};
+  }
+
+  result = preProcessResult(result);
+  return {status: DbStatusCode.SUCCESS, result};
+
+}
+
+const deleteFile = async (id: number): Promise<DbResponse> => {
+  
+  let result = undefined;
+
+  try{ 
+    result = await prisma.files.delete({
+      where: {id},
+    })
+  
+  } catch (e:any) { 
+
+    return { status: DbStatusCode.FAILED, error: marshallError(e)};
+  }
+
+  result = preProcessResult(result);
+  return {status: DbStatusCode.SUCCESS, result};
+}
 
 export {
   fetchUsers,
@@ -187,5 +316,11 @@ export {
   findUserByPhone,
   addUser,
   updateUser,
-  validateUserAccount
+  validateUserAccount,
+  addTranscription,
+  updateTranscription,
+  deleteTranscription,
+  addFile,
+  updateFile,
+  deleteFile
 }

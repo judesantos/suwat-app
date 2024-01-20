@@ -8,18 +8,49 @@ datasource db {
 }
 
 model User {
-  id            BigInt          @id @default(autoincrement())
-  fullName      String
-  email         String          @unique @db.Citext
-  userName      String?
-  password      String?
-  phone         String?
-  auth_provider auth_provider[]
+  id             BigInt           @id @default(autoincrement())
+  fullName       String
+  email          String           @unique @db.Citext
+  userName       String?
+  password       String?
+  phone          String?
+  date           DateTime?        @db.Timestamptz(6)
+  updated        DateTime?        @db.Timestamptz(6)
+  auth_provider  auth_provider[]
+  files          files[]
+  transcriptions transcriptions[]
 }
 
 model auth_provider {
-  id_      BigInt @id @default(autoincrement()) @map("id ")
+  id_      BigInt    @id @default(autoincrement()) @map("id ")
   user_id  BigInt
   provider String
-  User     User   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "provider_user_id_fkey")
+  date     DateTime? @db.Timestamptz(6)
+  updated  DateTime? @db.Timestamptz(6)
+  User     User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "provider_user_id_fkey")
+}
+
+model files {
+  id                                                    BigInt           @id @default(autoincrement())
+  user_id                                               BigInt
+  filename                                              String
+  date                                                  DateTime         @db.Timestamptz(6)
+  updated                                               DateTime         @db.Timestamptz(6)
+  transcription_id                                      BigInt?
+  transcriptions_files_transcription_idTotranscriptions transcriptions?  @relation("files_transcription_idTotranscriptions", fields: [transcription_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "files_trant_fkey")
+  User                                                  User             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "files_user_fk")
+  transcriptions_transcriptions_in_fileTofiles          transcriptions[] @relation("transcriptions_in_fileTofiles")
+  transcriptions_transcriptions_out_fileTofiles         transcriptions[] @relation("transcriptions_out_fileTofiles")
+}
+
+model transcriptions {
+  id                                           BigInt   @id
+  date                                         DateTime @db.Timestamptz(6)
+  user_id                                      BigInt
+  in_file                                      BigInt?
+  out_file                                     BigInt?
+  files_files_transcription_idTotranscriptions files[]  @relation("files_transcription_idTotranscriptions")
+  files_transcriptions_in_fileTofiles          files?   @relation("transcriptions_in_fileTofiles", fields: [in_file], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transcriptions_ifile_fkey")
+  files_transcriptions_out_fileTofiles         files?   @relation("transcriptions_out_fileTofiles", fields: [out_file], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "transcriptions_ofile_fkey")
+  User                                         User     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
