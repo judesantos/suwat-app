@@ -1,9 +1,13 @@
 import ThemeProvider from "@/components/theme-provider";
 import "../styles/globals.css";
 import { Metadata, Viewport } from "next";
-import { Inter } from 'next/font/google';
-
-const inter = Inter({subsets: ['latin'], display: 'swap'});
+import { Inter as FontSans } from 'next/font/google';
+import { cn } from "@/lib/utils"
+ 
+export const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 export const metadata: Metadata = {
   title: "Liftoff - AI-Powered Mock Interviews",
@@ -41,10 +45,12 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={inter.className}
       suppressHydrationWarning
     >
-      <body className="scroll-smooth antialiased [font-feature-settings:'ss01']">
+      <body className={cn(
+        "scroll-smooth antialiased [font-feature-settings:'ss01']",
+        fontSans.variable
+      )}>
         <ThemeProvider attribute="class">
           {children}
         </ThemeProvider>
