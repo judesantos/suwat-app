@@ -160,7 +160,7 @@ const DropArea = ({data, dispatch}: {data:any, dispatch:({})=>void}) => {
     //successful file upload
     if (response.ok) {
       // purge files
-      dispatch({type:"DELETE_FILES_FROM_LIST", files: data.files})
+      dispatch({type:"DELETE_ALL_FILES_FROM_LIST", files: data.files})
       alert("Files uploaded successfully");
 
     } else {
@@ -256,6 +256,8 @@ const DropArea = ({data, dispatch}: {data:any, dispatch:({})=>void}) => {
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
+    case "DELETE_ALL_FILES_FROM_LIST":
+      return {...state, files: []}
     case "DELETE_FILE_FROM_LIST":
       return {
         ...state,
