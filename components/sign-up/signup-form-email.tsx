@@ -184,6 +184,7 @@ const SignUpFormEmail = ({
           >
             Continue
             <ArrowRightIcon className="h-5 w-5 space-x-1" />
+            <span className="material-symbols-outlined">chevron_right</span>
           </Button>
           <div className="space-y-1 pt-5">
             <div className="text-center">

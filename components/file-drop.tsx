@@ -231,20 +231,18 @@ const DropArea = ({data, dispatch}: {data:any, dispatch:({})=>void}) => {
             {/* loop over the fileData */}
             {data?.files?.map((f: any) => {
               return (
-                <>
-                  <ol>
-                    <div
-                      className="group relative"
-                    >
-                      <ListViewFileItem
-                        name={f.name}
-                        lastModified={f.lastModified}
-                        data={data}
-                        dispatch={dispatch}
-                      />
-                    </div>
-                  </ol>
-                </>
+                <ol key={f.lastModified}>
+                  <div
+                    className="group relative"
+                  >
+                    <ListViewFileItem
+                      name={f.name}
+                      lastModified={f.lastModified}
+                      data={data}
+                      dispatch={dispatch}
+                    />
+                  </div>
+                </ol>
               );
             })}
           </div>
