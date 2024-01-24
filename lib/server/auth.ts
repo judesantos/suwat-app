@@ -7,7 +7,7 @@ import {
   getSessionToken
 } from '../firebase/firebase-admin';
 import * as jwt from 'jsonwebtoken';
-import { SessionCookie, User } from '../types';
+import { SessionCookie, User, UserSession } from '../types';
 import { UserRecord } from 'firebase-admin/auth';
 
 const jwt_key = process.env.NEXTAUTH_SECRET;
@@ -28,18 +28,21 @@ const deleteSessionCookie = () => {
       }
 }
 
-const getCurrentUser = async (): Promise<User|UserRecord|undefined> => {
+const getCurrentUser = async (): Promise<UserSession|undefined> => {
 
-  const session = await getSession();
+  const session: SessionCookie|undefined = await getSession();
   if (!session)
     return;
-
-  const {type, token} = session;
+  let user:UserSession|undefined = undefined;
+  const {type, user_id, token} = session;
   if (type === 'external') {
-    return await getSessionUser(token);
+    const ext_user:UserRecord|undefined =  await getSessionUser(token);
+    user = {...ext_user, id: user_id } as UserSession;
+  } else {
+    user = jwt.verify(token, jwt_key as jwt.Secret) as UserSession;
   }
 
-  return jwt.verify(token, jwt_key as jwt.Secret) as User;
+  return user;
 }
 
 const isSessionAlive = async (): Promise<boolean> => {
@@ -81,6 +84,7 @@ const getLoggedInUser = async () => {
 const saveSessionCookie = async (
   type: 'external'|'internal',
   data: string,
+  user_id?: number,
 ): Promise<void> => {
 
   let token:string = '';
@@ -96,7 +100,7 @@ const saveSessionCookie = async (
 
   cookies().set(
     "__session", 
-    JSON.stringify({type, token}), 
+    JSON.stringify({type, user_id, token} as SessionCookie), 
     {
       maxAge: expiresIn, 
       httpOnly: true

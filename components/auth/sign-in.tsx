@@ -37,13 +37,12 @@ const handleGoogleSignIn = async (
   if (success && credential) {
     // Check if user has an account with us. If not, prompt to enroll.
     if (credential?.user?.email) {
-      const user:User|boolean = await findUser(credential?.user?.email)
-      console.log({findUser: user})
+      const user:User|undefined = await findUser(credential?.user?.email)
       if (!user) {
         return {success: false, message: "Not found"};
       }
       // Account exists. Save session...
-      await saveSessionCredentials('external', credential);
+      await saveSessionCredentials('external', credential, user.id);
       // Refresh server pages. Otherwise, back button shows cached private pages.
       router.refresh();
       // redirect to dashboard

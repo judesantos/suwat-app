@@ -7,11 +7,12 @@ const POST = async (req: NextRequest) => {
 
   try {
 
-    const body = await req.json() as { type: 'external'|'external', idToken: string};
+    const body = await req.json() as { type: 'external'|'external', idToken: string, user_id: number};
     const idToken = body.idToken;
     const type = body.type;
+    const user_id = body.user_id;
 
-    await saveSessionCookie(type, idToken)
+    await saveSessionCookie(type, idToken, user_id)
     
   } catch(e) {
 

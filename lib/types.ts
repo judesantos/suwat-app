@@ -1,3 +1,6 @@
+import { UserRecord } from "firebase-admin/auth";
+import { number } from "zod";
+
 export type ApiResponse<T = object> = {
   success: boolean;
   data?: T 
@@ -11,8 +14,8 @@ export enum Role {
 
 export class UserAuthProvider {
   id: number = -1;
-  date?: Date|null;
-  updated?: Date|null;
+  date?: Date;
+  updated?: Date;
   user_id: number = -1;
   provider: string = '';
 }
@@ -48,6 +51,8 @@ export type User = {
   files?: File[],
   transcriptions?: Transcription[]
 };
+
+export type UserSession = User & UserRecord;
 
 export enum DbStatusCode {
   FAILED = -1,
@@ -94,6 +99,7 @@ export type AppResponse<T = any|null> = {
 export type SessionCredential = any;
 export type SessionCookie = {
   type: 'internal'|'external',
+  user_id: number,
   token: string
 }
 

@@ -1,6 +1,9 @@
-import { ApiResponse } from '@/lib/types'
+import { ApiResponse, UserSession } from '@/lib/types'
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs';
+import { getCurrentUser } from '@/lib/server/auth';
+import { addFile } from '@/lib/prisma/data';
+import { File as UserFile } from '@/lib/types';
 
 export async function POST(request: NextRequest) {
 
@@ -10,6 +13,13 @@ export async function POST(request: NextRequest) {
     const data = await request.formData()
     const formValues = Array.from(data.values());
 
+    const user:UserSession|undefined = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json<ApiResponse<string>>({
+        success: false, 
+        data: "Session is invalid."
+      });
+    }
 
     for (const formValue of formValues) {
 
@@ -19,6 +29,11 @@ export async function POST(request: NextRequest) {
         const buffer = Buffer.from(await file.arrayBuffer())
 
         fs.writeFileSync(`/tmp/${file.name}`, buffer)
+
+        await addFile({
+          user_id: user.id,
+          filename: file.name
+        } as UserFile);
 
         filesCount++;
       }

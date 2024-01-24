@@ -28,7 +28,8 @@ const validateUserAccount = async (
         // password match failed
         return {status: StatusCode.INVALID_VALUE, message: "Invalid email or password"};
       } else {
-        return {status: StatusCode.SUCCESS, data: preProcessResult(result)};
+        const user = preProcessResult(result) as User;
+        return {status: StatusCode.SUCCESS, data: user};
       }
     } else {
       return {status: StatusCode.NOT_FOUND, message: "Invalid email or password"};
@@ -130,8 +131,8 @@ const addUser = async (user: User): Promise<DbResponse> => {
       fullName: user.fullName,
       password: user.password,
       phone: user.phone,
-      date: Date.now(),
-      updated: Date.now()
+      date: new Date(),
+      updated: new Date()
     };
     // Include auth_providers, if any
     if (user?.providers?.length) {
@@ -166,7 +167,7 @@ const updateUser = async (user: User): Promise<DbResponse> => {
   let result = undefined;
 
   try{ 
-    let data:any = {...user, updated: Date.now()}
+    let data:any = {...user, updated: new Date()}
     result = await prisma.user.update({
       where: {id: user.id},
       data
@@ -191,7 +192,7 @@ const addTranscription = async (trx: Transcription): Promise<DbResponse> => {
   let result = undefined;
 
   try {
-    let data:any = {...trx, date: Date.now(), updated: Date.now()}
+    let data:any = {...trx, date: new Date(), updated: new Date()}
     result = await prisma.transcriptions.create({
       data,
     })
@@ -215,7 +216,7 @@ const updateTranscription = async (trx: Transcription): Promise<DbResponse> => {
   let result = undefined;
 
   try{ 
-    let data:any = {...trx, updated: Date.now()}
+    let data:any = {...trx, updated: new Date()}
     result = await prisma.transcriptions.update({
       where: {id: trx.id},
       data
@@ -253,30 +254,41 @@ const deleteTranscription = async (id: number): Promise<DbResponse> => {
   return {status: DbStatusCode.SUCCESS, result};
 }
 
+/**
+ * 
+ * @param file 
+ * @returns 
+ */
 const addFile = async (file: File): Promise<DbResponse> => {
 
   let result = undefined;
 
   try {
-    let data:any = {...file, date: Date.now(), updated: Date.now()};
+    let data:any = {...file, date: new Date(), updated: new Date()};
     result = await prisma.files.create({
       data,
     })
 
   } catch (e:any) {
-
+    console.log({addFileFailed: e})
     return { status: DbStatusCode.FAILED, error: marshallError(e)};
   }
 
   result = preProcessResult(result);
+  console.log({addFile: result})
   return {status: DbStatusCode.SUCCESS, result};
 }
 
+/**
+ * 
+ * @param file 
+ * @returns 
+ */
 const updateFile = async (file: File): Promise<DbResponse> => {
   let result = undefined;
 
   try{ 
-    let data:any = {...file, updated: Date.now()}
+    let data:any = {...file, updated: new Date()}
     result = await prisma.files.update({
       where: {id: file.id},
       data

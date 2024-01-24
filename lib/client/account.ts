@@ -1,19 +1,21 @@
 import { ApiResponse, User } from "../types";
 
-const findUser = async (email:string): Promise<User|boolean> => {
+const findUser = async (email:string): Promise<User|undefined> => {
 
   try {
 
     const resp = await fetch('/api/account/user?email='+email);
 
     const respBody = (await resp.json()) as unknown as ApiResponse<string>;
-    return (resp.ok && respBody.success) ? true : false
+
+    if (resp?.ok && respBody?.success) {
+      return respBody.data as User | undefined; 
+    }
 
   } catch(e) {
     console.error(e);
   }
 
-  return false;
 }
 
 export {

@@ -1,11 +1,11 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { UserRecord } from "firebase-admin/auth";
 import { Button } from "./ui/button";
 import ThemeChanger from "./site/dark-switch";
 import Link from 'next/link';
+import { UserSession } from "@/lib/types";
 
-const UserPortlet = async (props:{user:UserRecord|any}) => {
+const UserPortlet = async (props:{user:UserSession|any}) => {
 
   return (
     <>

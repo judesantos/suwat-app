@@ -90,10 +90,11 @@ const signOut = async () => {
 
 const saveSessionCredentials = async (
   type: 'external'|'internal',
-  creds: SessionCredential
+  creds: SessionCredential,
+  user_id?: number
 ) => {
 
-    let idToken = undefined;
+    let idToken:string|undefined = undefined;
     if (type === 'external') {
       idToken = await creds.user.getIdToken();
     } else {
@@ -106,7 +107,7 @@ const saveSessionCredentials = async (
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({type, idToken})
+      body: JSON.stringify({type, idToken, user_id})
     });
 
     const respBody = (await resp.json()) as unknown as ApiResponse<string>;

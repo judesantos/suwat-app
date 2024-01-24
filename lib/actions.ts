@@ -110,10 +110,9 @@ const emailPasswordSignIn = async (
   }
 
   // Validate user account
-  const resp: AppResponse =  await validateUserAccount(email, password);
+  const resp: AppResponse = await validateUserAccount(email, password);
   if (resp.status === StatusCode.SUCCESS) {
     // Save User info in session
-    console.log({emailPasswordLogin: resp})
     await saveSessionCookie('internal', resp.data);
     // Show authenticated landing page 
     revalidatePath("/dashboard")
