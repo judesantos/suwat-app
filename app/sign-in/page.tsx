@@ -6,7 +6,6 @@ import { isSessionAlive } from "@/lib/server/auth";
 const SignInPage = async () => {
 
   const isAuthenticated = await isSessionAlive();
-  console.log({isAuthenticated})
   if (isAuthenticated) {
     redirect("/dashboard");
   }

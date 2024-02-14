@@ -33,7 +33,6 @@ const handleGoogleSignIn = async (
 }> => {
 
   const {success, credential} = await providerSignIn(provider)
-  console.log({handleGoogleSignIn: {success, credential}})
   if (success && credential) {
     // Check if user has an account with us. If not, prompt to enroll.
     if (credential?.user?.email) {

@@ -1,8 +1,8 @@
 import Link from "next/link";
-import ThemeChanger from "./site/dark-switch";
 import UserPortlet from "./user-portlet";
 import { getCurrentUser } from "@/lib/server/auth";
-
+import DashboardMenu from "./ui/dashboard-menu";
+import ThemeChanger from "./site/dark-switch";
 
 export default async function Header() {
 
@@ -12,6 +12,7 @@ export default async function Header() {
   return (
     <div className="w-full">
       <nav className="container relative flex flex-wrap items-center justify-between p-8 mx-auto lg:justify-between xl:px-0">
+        <DashboardMenu navigation={navigation} user={user}/>
         <div className="hidden text-center lg:flex lg:items-center">
           <ul className="items-center justify-end flex-1 pt-6 list-none lg:pt-0 lg:flex">
             {navigation.map((menu, index) => (
@@ -25,10 +26,8 @@ export default async function Header() {
             ))}
           </ul>
         </div>
-        <div className="items-center justify-end flex-1 pt-6 list-none lg:pt-0 lg:flex">
-          <div className="hidden mr-3 space-x-3 lg:flex nav__item">
-            <UserPortlet user={user}/>
-          </div>
+        <div className="hidden mr-3 space-x-3 lg:flex nav__item">
+          <UserPortlet user={user}/>
           <ThemeChanger/>
         </div>
       </nav>

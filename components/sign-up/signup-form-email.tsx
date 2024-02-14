@@ -129,7 +129,7 @@ const SignUpFormEmail = ({
           <div
             className="flex-row font-semibold text-4xl text-gray-600"
           >
-            Welcome to Suwat.com
+            Welcome to <Link href="/" className="">Suwat.com</Link>
           </div>
           <div
             className="w-full text-center"
