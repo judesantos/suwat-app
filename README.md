@@ -16,7 +16,6 @@
 
 ### Backend
 - **Node.js** – JavaScript runtime for server-side operations.
-- **Express.js** – Lightweight web framework for building REST APIs.
 - **PostgreSQL** – Relational database for structured data storage.
 - **Sequelize** – ORM for handling database interactions in PostgreSQL.
 - **Socket.IO** – Enables real-time, two-way communication.
