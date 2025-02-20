@@ -1,53 +1,53 @@
-import AcmeLogo from '@/app/ui/acme-logo';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
+import NavBar from '@/components/site/navbar';
+import Hero from '@/components/site/hero';
+import SectionTitle from '@/components/site/section-title';
+import Testimonials from '@/components/site/testimonials';
+import Faq from '@/components/site/faq';
+import Footer from '@/components/site/footer';
+import Video from '@/components/site/video';
+import Benefits from '@/components/site/benefits';
+import Cta from '@/components/site/cta';
+import PopupWidget from '@/components/site/popup';
 
-import styles from '@/app/ui/home.module.css'
-import { lusitana } from './ui/fonts';
-import Image from 'next/image';
+import { benefitOne, benefitTwo } from "@/components/site/data";
 
-export default function Page() {
+export default function Index() {
   return (
-    <main className="flex min-h-screen flex-col p-6">
-      <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-52">
-        <AcmeLogo />
-        {/* <AcmeLogo /> */}
-      </div>
-      <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
-        <div className="flex flex-col justify-center gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-2/5 md:px-20">
-          <div className={styles.shape}></div>
-          <p className={`${lusitana.className} text-xl text-gray-800 md:text-3xl md:leading-normal`}>
-            <strong>Welcome to Acme.</strong> This is the example for the{' '}
-            <a href="https://nextjs.org/learn/" className="text-blue-500">
-              Next.js Learn Course
-            </a>
-            , brought to you by Vercel.
-          </p>
-          <Link
-            href="/login"
-            className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
-          >
-            <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
-          </Link>
-        </div>
-        <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
-          {/* Add Hero Images Here */}
-          <Image
-           src='/hero-desktop.png'
-           width={1000}
-           height={760}
-           className='hidden md:block'
-           alt='Screenshots of the dashboard project showing desktop version'
-          />
-          <Image
-           src='/hero-mobile.png'
-           width={560}
-           height={620}
-           className='block md:hidden'
-           alt='Screenshots of the dashboard project showing mobile version'
-          />
-        </div>
-      </div>
-    </main>
+    <>
+      <NavBar/>
+      <Hero />
+      <SectionTitle
+        pretitle="Nextly Benefits"
+        title=" Why should you use this landing page">
+        Nextly is a free landing page & marketing website template for startups
+        and indie projects. Its built with Next.js & TailwindCSS. And its
+        completely open-source.
+      </SectionTitle>
+      <Benefits data={benefitOne} />
+      <Benefits imgPos="right" data={benefitTwo} />
+      <SectionTitle
+        pretitle="Watch a video"
+        title="Learn how to fullfil your needs">
+        This section is to highlight a promo or demo video of your product.
+        Analysts says a landing page with video has 3% more conversion rate. So,
+        don&apost forget to add one. Just like this.
+      </SectionTitle>
+      <Video />
+      <SectionTitle
+        pretitle="Testimonials"
+        title="Here's what our customers said">
+        Testimonails is a great way to increase the brand trust and awareness.
+        Use this section to highlight your popular customers.
+      </SectionTitle>
+      <Testimonials />
+      <SectionTitle pretitle="FAQ" title="Frequently Asked Questions">
+        Answer your customers possible questions here, it will increase the
+        conversion rate as well as support or chat requests.
+      </SectionTitle>
+      <Faq />
+      <Cta />
+      <Footer />
+      <PopupWidget />
+    </>
   );
 }

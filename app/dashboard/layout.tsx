@@ -1,16 +1,25 @@
-import { ReactNode } from "react";
-import SideNav from "../ui/dashboard/sidenav";
+import Header from "@/components/header";
+import Container from "@/components/site/container";
+import SideBar from "@/components/ui/Sidebar/sidebar";
+import Dashboard from "@/components/ui/dashboard";
+import { ReactNode, Suspense } from "react";
 
-const Layout = ({children}: {children: ReactNode}) => {
+const Layout = async ({children}: {children: ReactNode}) => {
+
   return (
-    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
-      <div className="w-full flex-none md:w-64">
-        <SideNav/>
-      </div>
-      <div className="flex-grow p-6 md:overflow-y-auto md:p-12">
-        {children}
-      </div>
-    </div>
+    <>
+      <Suspense>
+        <Header/>
+      </Suspense>
+      <Container className="flex flex-wrap">
+        <Suspense>
+          <SideBar/>
+        </Suspense>
+        <Dashboard>
+          {children}
+        </Dashboard>
+      </Container>
+    </>
   );
 }
 
